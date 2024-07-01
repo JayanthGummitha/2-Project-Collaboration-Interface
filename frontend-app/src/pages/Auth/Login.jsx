@@ -1,10 +1,14 @@
+import { login } from '@/Redux/Auth/Action'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import { useDispatch } from 'react-redux'
 
 const Login = () => {
+
+  const dispatch=useDispatch()
 
     
         const form=useForm({
@@ -18,7 +22,8 @@ const Login = () => {
         })
     
         const onSubmit=(data)=>{
-            console.log("create new project", data)
+          dispatch(login(data))
+            console.log("login success", data)
         }
   return (
     <div>

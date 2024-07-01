@@ -4,13 +4,24 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { PlusIcon } from "@radix-ui/react-icons";
-import React from "react";
+import React, { useEffect } from "react";
 import InviteUserForm from "./InviteUserForm";
 import IssueList from "./IssueList";
 import ChatBox from "./ChatBox";
+import { useDispatch, useSelector } from "react-redux";
+import { store } from "@/Redux/Store";
+import { useParams } from "react-router-dom";
+import { fetchProjectById } from "@/Redux/Project/Action";
 
 const ProjectDetails = () => {
+
     const handleProjectInvitation=()=>{}
+    const dispatch=useDispatch();
+    const {id}=useParams();
+    const {project}=useSelector(store=>store);
+    useEffect(()=>{
+      dispatch(fetchProjectById(id))
+  },[id])
   return (
     <>
       <div className="mt-5 lg:px-10">
@@ -18,23 +29,23 @@ const ProjectDetails = () => {
           <ScrollArea className="h-screen lg:w-[69%] pr-2">
             <div className="text-gray-400 pb-10 w-full">
               <h1 className="text-lg font-semibold pb-5 ">
-                Create E-commerce Website Using React
+                {project.projectDetails?.name}
               </h1>
 
               <div className="space-y-5 pb-10 text-sm">
                 <p className="w-full md:max-w-lg  lg:max-w-xl">
-                  Lorem ipsum dolor sit amet.
+                {project.projectDetails?.description}
                 </p>
                 <div className="flex">
-                  <p className="w-36">Full Name :</p>
-                  <p>Jayanth</p>
+                  <p className="w-36"> Project Lead:</p>
+                  <p>{project.projectDetails?.owner.fullName}</p>
                 </div>
                 <div className="flex">
                   <p className="w-36">Member :</p>
-                  <div className="flex items-center gap-2">
-                    {[1, 1, 1].map((item) => (
-                      <Avatar>
-                        <AvatarFallback>J</AvatarFallback>
+                  <div className="flex items-center gap-2" >
+                    {project.projectDetails?.team.map((item) => (
+                      <Avatar key={item} className="cursor-pointer">
+                        <AvatarFallback>{item.fullName[0]}</AvatarFallback>
                       </Avatar>
                     ))}
                   </div>
@@ -61,12 +72,12 @@ const ProjectDetails = () => {
                 </div>
                 <div className="flex">
                   <p className="w-36">Category :</p>
-                  <p>Full Stack</p>
+                  <p>{project.projectDetails?.category}</p>
                 </div>
                 <div className="flex">
                   <p className="w-36">Project Lead :</p>
 
-                  <Badge>Jayanth</Badge>
+                  <Badge>{project.projectDetails?.owner.fullName}</Badge>
                 </div>
               </div>
 

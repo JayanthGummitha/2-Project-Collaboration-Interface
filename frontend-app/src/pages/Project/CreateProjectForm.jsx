@@ -1,3 +1,4 @@
+import { createProject } from '@/Redux/Project/Action'
 import { Button } from '@/components/ui/button'
 import { DialogClose } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
@@ -6,11 +7,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Cross1Icon } from '@radix-ui/react-icons'
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import { useDispatch } from 'react-redux'
 const tags=[
-  'all','react','nextjs','spring boot','mysql','mongodb','angular','python','flask','django'
+  'all',"java",'react','nextjs','spring boot','mysql','mongodb','angular','python','flask','django'
 ]
 
 const CreateProjectForm = () => {
+  const dispatch=useDispatch()
   const handleTagsChange=(newValue)=>{
     const currentTags=form.getValues("tags");
     const updatedTags=currentTags.includes(newValue)?
@@ -28,7 +31,8 @@ const CreateProjectForm = () => {
     })
 
     const onSubmit=(data)=>{
-        console.log("create new project", data)
+      dispatch(createProject(data))
+        // console.log("create new project", data)
     }
   return (
     <div>

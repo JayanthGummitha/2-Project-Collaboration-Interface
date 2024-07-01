@@ -1,25 +1,33 @@
+import { deleteProject, fetchProjectById } from '@/Redux/Project/Action'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { DotFilledIcon, DotsVerticalIcon } from '@radix-ui/react-icons'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import { Navigate, useNavigate } from 'react-router-dom'
 
-const ProjectCard = () => {
+const ProjectCard = ({item}) => {
     const navigate=useNavigate()
+    const dispatch=useDispatch();
+
+    const handleDelete=()=>{
+        dispatch(deleteProject({projectId:item.id}))
+
+    }
+ 
   return (
     <Card className='p-5 w-full lg:max-w-3xl'>
         <div className='space-y-5'>
             <div className='space-y-2'>
                 <div className='flex justify-between'>
                     <div className='flex items-center gap-5'>
-                        <h1 onClick={()=>navigate("/project/3")} className='cursor-pointer font-bold text-lg'>
-                            Create E-commerce Project
-
+                        <h1 onClick={()=>navigate("/project/"+item.id)} className='cursor-pointer font-bold text-lg'>
+                           {item.name}
                         </h1>
                         <DotFilledIcon/>
-                        <p className='text-sm to-gray-400'>full Stack</p>
+                        <p className='text-sm to-gray-400'>{item.category}</p>
 
                     </div>
                     <div>
@@ -33,7 +41,7 @@ const ProjectCard = () => {
                                 <DropdownMenuItem>
                                     Update
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={handleDelete}>
                                     Delete
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -41,13 +49,13 @@ const ProjectCard = () => {
                     </div>
 
                 </div>
-                <p className='text-sm to-gray-500'>Lorem ipsum, dolor sit amet consectetur adipisicing elit. </p>
+                <p className='text-sm to-gray-500'>{item.description} </p>
 
             </div>
             <div className='flex flex-wrap gap-2 items-center'>
 
                 {
-                    [1,1,1,1].map((item)=> <Badge variant='outline'>frontend</Badge>
+                    item.tags.map((tag)=> <Badge variant='outline'>{tag}</Badge>
                     )
                 }
 

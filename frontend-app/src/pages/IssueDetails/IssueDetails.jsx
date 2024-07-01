@@ -1,6 +1,6 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import CreateCommentForm from "./CreateCommentForm";
 import CommentCard from "./CommentCard";
@@ -13,24 +13,36 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchIssuesById, updateIssueStatus } from "@/Redux/Issue/Action";
+import { store } from "@/Redux/Store";
+import { fetchComments } from "@/Redux/Comment/Action";
 
 const IssueDetails = () => {
   const { projectId, issueId } = useParams();
+  const dispatch = useDispatch();
+  const {issue,comment}=useSelector(store=>store)
   const handleUpdateIssueStatus = (status) => {
+    dispatch(updateIssueStatus({status,id:issueId}))
     console.log(status);
   };
+
+  useEffect(() => {
+    dispatch(fetchIssuesById(issueId));
+    dispatch(fetchComments(issueId))
+  }, [issueId]);
   return (
     <div className="px-20  py-8 text-gray-400">
-      <div className="flex justify-between border p-10 rounded-lg">
+      <div className="flex flex-col lg:flex-row justify-between border p-10 rounded-lg">
         <ScrollArea>
           <div className="h-[80vh] w-[60%]">
             <h1 className="text-lg font-semibold text-gray-400">
-              create navbar
+              {issue.issueDetails?.title}
             </h1>
             <div className="py-5">
-              <h2 className="font-semibold text-gray-400">Description</h2>
+              <h2 className="font-semibold text-gray-400">Description :</h2>
               <p className="text-sm mt-3 text-gray-400">
-                Lorem ipsum dolor sit amet.
+              {issue.issueDetails?.description}
               </p>
             </div>
             <div className="mt-5">
@@ -47,8 +59,8 @@ const IssueDetails = () => {
                 <TabsContent value="comments">
                   <CreateCommentForm issueId={issueId} />
                   <div className="mt-8 space-y-6">
-                    {[1, 1, 1, 1].map((item) => (
-                      <CommentCard />
+                    {comment.comments.map((item) => (
+                      <CommentCard key={item} item={item}/>
                     ))}
                   </div>
                 </TabsContent>
@@ -59,7 +71,7 @@ const IssueDetails = () => {
             </div>
           </div>
         </ScrollArea>
-        <div className="w-full lg:w-[30%] space-y-2">
+        <div className="w-full lg:w-[30%] space-y-2 mt-[2rem]">
           <Select onValueChange={handleUpdateIssueStatus}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="To Do" />
@@ -76,29 +88,29 @@ const IssueDetails = () => {
             <div className="p-5">
               <div className="space-y-7">
                 <div className="flex gap-10 items-center">
-                  <p className="w-[7rem]">Assign</p>
-                  <div className="flex items-center gap-3">
+                  <p className="w-[7rem]">Assignee</p>
+                  {
+                    issue.issueDetails?.assignee?.fullName ?
+                    <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8 text-xs">
-                      <AvatarFallback>J</AvatarFallback>
+                      <AvatarFallback> { issue.issueDetails?.assignee?.fullName[0]}</AvatarFallback>
                     </Avatar>
-                  </div>
+                    <p>{issue.issueDetails?.assignee?.fullName}</p>
+                  </div>:<p>unassigned</p>
+                  }
+                  
                 </div>
                 <div className="flex gap-10 items-center">
                   <p className="w-[7rem]">Labels</p>
-                  <p >Labels</p>
-                  
+                  <p>Labels</p>
                 </div>
                 <div className="flex gap-10 items-center">
                   <p className="w-[7rem]">Status</p>
-                  <Badge>
-                    in_progress
-                  </Badge>
-                  
+                  <Badge>{issue.issueDetails?.status}</Badge>
                 </div>
                 <div className="flex gap-10 items-center">
                   <p className="w-[7rem]">Realese</p>
-                  <p >06-15-2024</p>
-                  
+                  <p>06-15-2024</p>
                 </div>
                 <div className="flex gap-10 items-center">
                   <p className="w-[7rem]">Reporter</p>
